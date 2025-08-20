@@ -32,13 +32,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
-const port = process.env.PORT;
+const port = process.env.NCR_PORT;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const whitelist = process.env.WHITELISTED_DOMAINS_NCR
-  ? process.env.WHITELISTED_DOMAINS_NCR.split(",")
+const whitelist = process.env.NCR_WHITELISTED_DOMAINS
+  ? process.env.NCR_WHITELISTED_DOMAINS.split(",")
   : [];
 
 console.log(whitelist)

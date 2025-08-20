@@ -9,19 +9,19 @@ const jwt = require('jsonwebtoken');
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
-  
+
 
     try {
         let sql = "SELECT * FROM users where ?";
         sql = mysql.format(sql, [{ email }]);
 
-      
+
         const [result] = await promisePool.query(sql);
-        
+
         const [row] = result;
 
         if (result.length < 1) {
-            
+
             throw new Error("Invalid credentials provided")
         }
 
@@ -30,17 +30,17 @@ const loginUser = async (req, res) => {
             const userID = row.id;
             const tokenExpiry = 18000;
             //const token = jwt.sign({ userID }, process.env.JWT_SECRET, { expiresIn: tokenExpiry })
-            const token = jwt.sign({ userID }, process.env.JWT_SECRET)            
+            const token = jwt.sign({ userID }, process.env.JWT_SECRET)
             res.status(201).json({ user: row, userID, token, tokenExpiry, auth: true });
 
-        } else {            
+        } else {
             throw new Error("Invalid credentials provided")
         }
 
     } catch (err) {
-console.log(err)
+        console.log(err)
         console.log(err.message);
-        res.status(409).json(err.message)
+        res.status(409).json({error : err.message})
     }
 
 }
@@ -50,18 +50,18 @@ const logoutUser = (req, res) => {
 }
 
 const updateUser = async (req, res) => {
-    
+
     const { email, fName: name, lName: surname, department, organisation, location, contactNo: contact_no, role: user_type } = req.body;
 
     try {
         let sql = "UPDATE users SET ? WHERE ?"
-        sql = mysql.format(sql, [{ name, surname, email, department, organisation, location, contact_no, user_type }, {email}]);
-         
-        
+        sql = mysql.format(sql, [{ name, surname, email, department, organisation, location, contact_no, user_type }, { email }]);
+
+
         await promisePool.query(sql);
 
         res.status(201).json({ msg: 'User successfully updated' });
-    }catch (err) {
+    } catch (err) {
         res.status(409).json(err.message);
     }
 }
@@ -148,7 +148,7 @@ const forgotPassword = async (req, res) => {
 
     try {
         const [result] = await promisePool.query(sql)
-       // console.log(result.length);
+        // console.log(result.length);
         if (result.length > 0) {
 
             const authToken = toolsObj.createAuthToken();
